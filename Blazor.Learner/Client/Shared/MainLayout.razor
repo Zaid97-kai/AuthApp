@@ -1,17 +1,37 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject CustomStateProvider AuthStateProvider
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="pb-2 mt-4 mb-2 border-bottom">
+    <div class="top-row">
+        <button type="button" class="btn btn-link ml-md-auto" @onclick="@LogoutClick">Logout</button>
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    <div class="content px-4">
+        @Body
+    </div>
 </div>
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+@functions {
+
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var userIdentity = (await AuthenticationState).User.Identity;
+        if (userIdentity is {IsAuthenticated: false })
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+    async Task LogoutClick()
+    {
+        await AuthStateProvider.Logout();
+        NavigationManager.NavigateTo("/login");
+    }
+}
