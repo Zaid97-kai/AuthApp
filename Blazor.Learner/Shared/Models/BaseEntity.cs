@@ -1,7 +1,13 @@
-﻿namespace Blazor.Learner.Shared.Models
+﻿namespace Blazor.Learner.Shared.Models;
+
+/// <summary>
+/// Class BaseEntity.
+/// </summary>
+public abstract class BaseEntity
 {
-    public abstract class BaseEntity
-    {
-        public virtual int Id { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the identifier.
+    /// </summary>
+    /// <value>The identifier.</value>
+    public virtual int Id { get; set; }
 }

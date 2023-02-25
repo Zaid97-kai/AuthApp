@@ -1,6 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@inject CustomStateProvider AuthStateProvider
 
 <div class="pb-2 mt-4 mb-2 border-bottom">
     <div class="top-row">
@@ -16,22 +14,6 @@
     <NavMenu />
 </div>
 
-@functions {
+@code {
 
-    [CascadingParameter]
-    Task<AuthenticationState> AuthenticationState { get; set; }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        var userIdentity = (await AuthenticationState).User.Identity;
-        if (userIdentity is {IsAuthenticated: false })
-        {
-            NavigationManager.NavigateTo("/login");
-        }
-    }
-    async Task LogoutClick()
-    {
-        await AuthStateProvider.Logout();
-        NavigationManager.NavigateTo("/login");
-    }
 }

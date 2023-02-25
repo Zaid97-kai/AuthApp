@@ -3,31 +3,29 @@
 @using Microsoft.AspNetCore.Components
 @using Blazor.Learner.Shared.Models
 @layout AuthLayout
-@inject NavigationManager navigationManager
-@inject CustomStateProvider authStateProvider
 
 <h1 class="h2 font-weight-normal login-title">
    Register
 </h1>
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="RegisterRequest">
     <DataAnnotationsValidator />
 
     <label for="inputUsername" class="sr-only">User Name</label>
-    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@registerRequest.UserName" />
-    <ValidationMessage For="@(() => registerRequest.UserName)" />
+    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@RegisterRequest.UserName" />
+    <ValidationMessage For="@(() => RegisterRequest.UserName)" />
 
     <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@registerRequest.Password" />
-    <ValidationMessage For="@(() => registerRequest.Password)" />
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@RegisterRequest.Password" />
+    <ValidationMessage For="@(() => RegisterRequest.Password)" />
 
     <label for="inputPasswordConfirm" class="sr-only">Password Confirmation</label>
-    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerRequest.PasswordConfirm" />
-    <ValidationMessage For="@(() => registerRequest.PasswordConfirm)" />
+    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@RegisterRequest.PasswordConfirm" />
+    <ValidationMessage For="@(() => RegisterRequest.PasswordConfirm)" />
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
 
-    <label class="text-danger">@error</label>
+    <label class="text-danger">@Error</label>
     <NavLink href="login">
         <h6 class="font-weight-normal text-center">Already have an account? Click here to login</h6>
     </NavLink>
@@ -35,20 +33,5 @@
 
 @functions{
 
-    RegisterRequest registerRequest { get; set; } = new RegisterRequest();
-    string error { get; set; }
-
-    async Task OnSubmit()
-    {
-        error = null;
-        try
-        {
-            await authStateProvider.Register(registerRequest);
-            navigationManager.NavigateTo("");
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-    }
+    
 }

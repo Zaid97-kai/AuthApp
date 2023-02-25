@@ -1,34 +1,29 @@
 ﻿@page "/login"
-@using Blazor.Learner.Client.Services
-@using Microsoft.AspNetCore.Components
-@using Blazor.Learner.Shared.Models
 @layout AuthLayout
-@inject NavigationManager navigationManager
-@inject CustomStateProvider authStateProvider
 
 <h1 class="h2 font-weight-normal login-title">
     Login
 </h1>
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="LoginRequest">
     <DataAnnotationsValidator />
 
     <label for="inputUsername" class="sr-only">User Name</label>
-    <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.UserName" autofocus placeholder="Username" />
-    <ValidationMessage For="@(() => loginRequest.UserName)" />
+    <InputText id="inputUsername" class="form-control" @bind-Value="LoginRequest.UserName" autofocus placeholder="Username" />
+    <ValidationMessage For="@(() => LoginRequest.UserName)" />
 
     <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
-    <ValidationMessage For="@(() => loginRequest.Password)" />
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="LoginRequest.Password" />
+    <ValidationMessage For="@(() => LoginRequest.Password)" />
 
     <div class="form-check m-3">
-        <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@loginRequest.RememberMe" />
+        <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@LoginRequest.RememberMe" />
         <label class="form-check-label" for="inputRememberMe">Remember Me</label>
     </div>
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 
-    <label class="text-danger">@error</label>
+    <label class="text-danger">@Error</label>
 
     <NavLink href="register">
         <h6 class="font-weight-normal text-center">Create account</h6>
@@ -36,20 +31,5 @@
 </EditForm>
 
 @code{
-    LoginRequest loginRequest { get; set; } = new LoginRequest();
-    string error { get; set; }
-
-    async Task OnSubmit()
-    {
-        error = null;
-        try
-        {
-            await authStateProvider.Login(loginRequest);
-            navigationManager.NavigateTo("");
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-    }
+    
 }

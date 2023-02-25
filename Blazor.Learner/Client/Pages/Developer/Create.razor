@@ -4,14 +4,14 @@
 
 <h3>Create</h3>
 
-<Form ButtonText="Create Developer" dev="@dev"
+<Form ButtonText="Create Developer" dev="@_dev"
             OnValidSubmit="@CreateDeveloper" />
 
 @code {
-    Developer dev = new Developer();
+    Developer _dev = new Developer();
     async Task CreateDeveloper()
     {
-        await http.PostAsJsonAsync("api/developer", dev);
+        await http.PostAsJsonAsync("api/developer", _dev);
         uriHelper.NavigateTo("developer");
     }
 }
