@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Blazor.Learner.Server.Constants;
 
 namespace Blazor.Learner.Server.Services;
 
@@ -32,7 +33,7 @@ public class UserService : IUserService
     private readonly JWT _jwt;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserService"/> class.
+    /// Initializes a new instance of the <see cref="UserService" /> class.
     /// </summary>
     /// <param name="userManager">The user manager.</param>
     /// <param name="roleManager">The role manager.</param>
@@ -76,6 +77,33 @@ public class UserService : IUserService
         authenticationModel.IsAuthenticated = false;
         authenticationModel.Message = $"Incorrect Credentials for user {user.Email}.";
         return authenticationModel;
+    }
+
+    /// <summary>
+    /// Add role as an asynchronous operation.
+    /// </summary>
+    /// <param name="model">The model.</param>
+    /// <returns>A Task&lt;System.String&gt; representing the asynchronous operation.</returns>
+    public async Task<string> AddRoleAsync(AddRoleModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            return $"No Accounts Registered with {model.Email}.";
+        }
+        if (await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            var roleExists = Enum.GetNames(typeof(Authorization.Roles)).Any(x => x.ToLower() == model.Role.ToLower());
+            if (roleExists)
+            {
+                var validRole = Enum.GetValues(typeof(Authorization.Roles)).Cast<Authorization.Roles>().FirstOrDefault(x => x.ToString().ToLower() == model.Role.ToLower());
+                await _userManager.AddToRoleAsync(user, validRole.ToString());
+                return $"Added {model.Role} to user {model.Email}.";
+            }
+            return $"Role {model.Role} not found.";
+        }
+        return $"Incorrect Credentials for user {user.Email}.";
+
     }
 
     /// <summary>

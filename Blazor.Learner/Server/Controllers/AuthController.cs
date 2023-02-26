@@ -53,9 +53,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
-        if (user == null) return BadRequest("User does not exist");
+        if (user == null) 
+            return BadRequest("User does not exist");
         var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!singInResult.Succeeded) return BadRequest("Invalid password");
+        if (!singInResult.Succeeded) 
+            return BadRequest("Invalid password");
         await _signInManager.SignInAsync(user, request.RememberMe);
         return Ok();
     }
@@ -111,8 +113,7 @@ public class AuthController : ControllerBase
         {
             IsAuthenticated = User.Identity!.IsAuthenticated,
             UserName = User.Identity.Name!,
-            Claims = User.Claims
-                .ToDictionary(c => c.Type, c => c.Value)
+            Claims = User.Claims.ToDictionary(c => c.Type, c => c.Value)
         };
     }
 
@@ -125,6 +126,18 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
     {
         var result = await _userService.GetTokenAsync(model);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Add role as an asynchronous operation.
+    /// </summary>
+    /// <param name="model">The model.</param>
+    /// <returns>A Task&lt;IActionResult&gt; representing the asynchronous operation.</returns>
+    [HttpPost("addrole")]
+    public async Task<IActionResult> AddRoleAsync(AddRoleModel model)
+    {
+        var result = await _userService.AddRoleAsync(model);
         return Ok(result);
     }
 }

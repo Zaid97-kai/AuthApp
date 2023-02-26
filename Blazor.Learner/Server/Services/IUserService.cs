@@ -13,4 +13,11 @@ public interface IUserService
     /// <param name="model">The model.</param>
     /// <returns>Task&lt;AuthenticationModel&gt;.</returns>
     Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model);
+
+    /// <summary>
+    /// Adds the role asynchronous.
+    /// </summary>
+    /// <param name="model">The model.</param>
+    /// <returns>Task&lt;System.String&gt;.</returns>
+    Task<string> AddRoleAsync(AddRoleModel model);
 }
