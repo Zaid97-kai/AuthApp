@@ -43,22 +43,20 @@ public class Startup
     {
         services.Configure<JWT>(Configuration.GetSection("JWT"));
 
-        services.AddScoped<IUserService, UserService>();
-
         services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
+
+        services.AddScoped<IUserService, UserService>();
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(swagger =>
         {
-            //This is to generate the Default UI of Swagger Documentation
             swagger.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
                 Title = "Web API",
                 Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
             });
-            // To Enable authorization using Swagger (JWT)
             swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
             {
                 Name = "Authorization",
@@ -83,16 +81,6 @@ public class Startup
 
                 }
             });
-        });
-    
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.Cookie.HttpOnly = false;
-            options.Events.OnRedirectToLogin = context =>
-            {
-                context.Response.StatusCode = 401;
-                return Task.CompletedTask;
-            };
         });
 
         services.AddAuthentication(options =>
