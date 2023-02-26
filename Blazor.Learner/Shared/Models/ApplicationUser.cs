@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Blazor.Learner.Server.Models;
+namespace Blazor.Learner.Shared.Models;
 
 /// <summary>
 /// Class ApplicationUser.

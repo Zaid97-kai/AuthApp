@@ -1,4 +1,4 @@
-﻿using Blazor.Learner.Server.Models;
+﻿using Blazor.Learner.Server.Constants;
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -63,7 +63,15 @@ public class AuthController : ControllerBase
         var user = new ApplicationUser();
         user.UserName = parameters.UserName;
         var result = await _userManager.CreateAsync(user, parameters.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
+
+        switch (result.Succeeded)
+        {
+            case false:
+                return BadRequest(result.Errors.FirstOrDefault()?.Description);
+            case true:
+                await _userManager.AddToRoleAsync(user, Authorization.DefaultRole.ToString());
+                break;
+        }
 
         return await Login(new LoginRequest
         {

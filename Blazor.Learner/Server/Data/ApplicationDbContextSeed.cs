@@ -1,5 +1,5 @@
 ﻿using Blazor.Learner.Server.Constants;
-using Blazor.Learner.Server.Models;
+using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blazor.Learner.Server.Data;

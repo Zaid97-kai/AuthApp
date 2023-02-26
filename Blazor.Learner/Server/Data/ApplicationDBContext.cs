@@ -1,5 +1,4 @@
-﻿using Blazor.Learner.Server.Models;
-using Blazor.Learner.Shared.Models;
+﻿using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

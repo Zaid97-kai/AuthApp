@@ -1,5 +1,7 @@
-﻿using Blazor.Learner.Shared.Models;
+﻿using Blazor.Learner.Server.Settings;
+using Microsoft.AspNetCore.Identity;
 using System.Net.Http.Json;
+using Blazor.Learner.Shared.Models;
 
 namespace Blazor.Learner.Client.Services;
 
@@ -16,7 +18,7 @@ public class AuthService : IAuthService
     private readonly HttpClient _httpClient;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AuthService"/> class.
+    /// Initializes a new instance of the <see cref="AuthService" /> class.
     /// </summary>
     /// <param name="httpClient">The HTTP client.</param>
     public AuthService(HttpClient httpClient)
@@ -38,17 +40,20 @@ public class AuthService : IAuthService
     /// Logins the specified login request.
     /// </summary>
     /// <param name="loginRequest">The login request.</param>
+    /// <returns>Task.</returns>
     /// <exception cref="System.Exception"></exception>
     public async Task Login(LoginRequest loginRequest)
     {
         var result = await _httpClient.PostAsJsonAsync("api/auth/login", loginRequest);
-        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            throw new Exception(await result.Content.ReadAsStringAsync());
         result.EnsureSuccessStatusCode();
     }
 
     /// <summary>
     /// Logouts this instance.
     /// </summary>
+    /// <returns>Task.</returns>
     public async Task Logout()
     {
         var result = await _httpClient.PostAsync("api/auth/logout", null);
@@ -59,12 +64,13 @@ public class AuthService : IAuthService
     /// Registers the specified register request.
     /// </summary>
     /// <param name="registerRequest">The register request.</param>
+    /// <returns>Task.</returns>
     /// <exception cref="System.Exception"></exception>
     public async Task Register(RegisterRequest registerRequest)
     {
         var result = await _httpClient.PostAsJsonAsync("api/auth/register", registerRequest);
-        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            throw new Exception(await result.Content.ReadAsStringAsync());
         result.EnsureSuccessStatusCode();
     }
-
 }

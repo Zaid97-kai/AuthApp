@@ -1,5 +1,5 @@
 using Blazor.Learner.Server.Data;
-using Blazor.Learner.Server.Models;
+using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blazor.Learner.Server;
@@ -9,6 +9,7 @@ namespace Blazor.Learner.Server;
 /// </summary>
 public class Program
 {
+
     /// <summary>
     /// Defines the entry point of the application.
     /// </summary>
