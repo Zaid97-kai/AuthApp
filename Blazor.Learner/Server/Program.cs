@@ -1,17 +1,51 @@
-namespace Blazor.Learner.Server
+using Blazor.Learner.Server.Data;
+using Blazor.Learner.Server.Models;
+using Microsoft.AspNetCore.Identity;
+
+namespace Blazor.Learner.Server;
+
+/// <summary>
+/// Class Program.
+/// </summary>
+public class Program
 {
-    public class Program
+    /// <summary>
+    /// Defines the entry point of the application.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
+        var host = CreateHostBuilder(args).Build();
+
+        using (var scope = host.Services.CreateScope())
         {
-            CreateHostBuilder(args).Build().Run();
+            var services = scope.ServiceProvider;
+            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+            try
+            {
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                await ApplicationDbContextSeed.SeedEssentialsAsync(userManager, roleManager);
+            }
+            catch (Exception ex)
+            {
+                var logger = loggerFactory.CreateLogger<Program>();
+                logger.LogError(ex, "An error occurred seeding the DB.");
+            }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        await host.RunAsync();
     }
+
+    /// <summary>
+    /// Creates the host builder.
+    /// </summary>
+    /// <param name="args">The arguments.</param>
+    /// <returns>IHostBuilder.</returns>
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }

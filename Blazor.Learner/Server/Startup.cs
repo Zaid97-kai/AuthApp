@@ -2,6 +2,8 @@ using Blazor.Learner.Server.Data;
 using Blazor.Learner.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Blazor.Learner.Server
 {
@@ -20,6 +22,7 @@ namespace Blazor.Learner.Server
         {
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = false;
