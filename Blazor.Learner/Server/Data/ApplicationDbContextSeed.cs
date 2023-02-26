@@ -25,7 +25,8 @@ public class ApplicationDbContextSeed
         {
             UserName = Authorization.DefaultUsername, 
             Email = Authorization.DefaultEmail, 
-            EmailConfirmed = true, PhoneNumberConfirmed = true
+            EmailConfirmed = true, 
+            PhoneNumberConfirmed = true
         };
 
         if (userManager.Users.All(u => u.Id != defaultUser.Id))
