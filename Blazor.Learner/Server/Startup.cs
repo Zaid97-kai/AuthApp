@@ -1,5 +1,6 @@
 using System.Text;
 using Blazor.Learner.Server.Data;
+using Blazor.Learner.Server.Services;
 using Blazor.Learner.Server.Settings;
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace Blazor.Learner.Server;
 
@@ -41,8 +43,22 @@ public class Startup
     {
         services.Configure<JWT>(Configuration.GetSection("JWT"));
 
+        services.AddScoped<IUserService, UserService>();
+
         services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
+
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1",
+                new OpenApiInfo()
+                {
+                    Title = "Swagger Demo API",
+                    Description = "Demo API for showing Swagger",
+                    Version = "v1"
+                });
+        });
 
         services.ConfigureApplicationCookie(options =>
         {
@@ -99,6 +115,15 @@ public class Startup
             app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
+        }
+
+        if (env.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Demo API");
+            });
         }
 
         app.UseHttpsRedirection();
