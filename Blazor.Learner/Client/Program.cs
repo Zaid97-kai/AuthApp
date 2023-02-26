@@ -1,5 +1,5 @@
 using Blazor.Learner.Client.Services;
-using Blazor.Learner.Server.Settings;
+using Blazor.Learner.Shared.Settings;
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

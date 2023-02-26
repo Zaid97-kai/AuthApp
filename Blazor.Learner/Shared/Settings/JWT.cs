@@ -1,4 +1,4 @@
-﻿namespace Blazor.Learner.Server.Settings;
+﻿namespace Blazor.Learner.Shared.Settings;
 
 /// <summary>
 /// Class JWT.

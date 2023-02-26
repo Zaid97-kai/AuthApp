@@ -39,6 +39,7 @@ public class DeveloperController : ControllerBase
         var devs = await _context.Developers.ToListAsync();
         return Ok(devs);
     }
+
     /// <summary>
     /// Gets the specified identifier.
     /// </summary>
@@ -50,6 +51,7 @@ public class DeveloperController : ControllerBase
         var dev = await _context.Developers.FirstOrDefaultAsync(a => a.Id == id);
         return Ok(dev);
     }
+
     /// <summary>
     /// Posts the specified developer.
     /// </summary>

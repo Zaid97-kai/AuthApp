@@ -1,7 +1,7 @@
 using System.Text;
 using Blazor.Learner.Server.Data;
 using Blazor.Learner.Server.Services;
-using Blazor.Learner.Server.Settings;
+using Blazor.Learner.Shared.Settings;
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

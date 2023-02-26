@@ -62,9 +62,14 @@ public class AuthController : ControllerBase
     /// <param name="request">The request.</param>
     /// <returns>IActionResult.</returns>
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
+        await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        await _signInManager.SignInAsync(user, request.RememberMe);
+
         if (user != null && await _userManager.CheckPasswordAsync(user, request.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -87,8 +92,7 @@ public class AuthController : ControllerBase
                 audience: _configuration["JWT:Audience"],
             expires: DateTime.Now.AddHours(3),
             claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
 
             return Ok(new
             {
@@ -148,7 +152,7 @@ public class AuthController : ControllerBase
     [HttpGet]
     public CurrentUser CurrentUserInfo()
     {
-         return new CurrentUser
+        return new CurrentUser
         {
             IsAuthenticated = User.Identity!.IsAuthenticated,
             UserName = User.Identity.Name!,

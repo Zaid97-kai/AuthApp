@@ -1,4 +1,4 @@
-﻿using Blazor.Learner.Server.Settings;
+﻿using Blazor.Learner.Shared.Settings;
 using Blazor.Learner.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
