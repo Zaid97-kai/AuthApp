@@ -1,9 +1,14 @@
 ﻿using Blazor.Learner.Server.Constants;
 using Blazor.Learner.Server.Services;
 using Blazor.Learner.Shared.Models;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Blazor.Learner.Server.Controllers;
 
@@ -32,20 +37,27 @@ public class AuthController : ControllerBase
     private readonly IUserService _userService;
 
     /// <summary>
+    /// The configuration
+    /// </summary>
+    private readonly IConfiguration _configuration;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="AuthController" /> class.
     /// </summary>
     /// <param name="userManager">The user manager.</param>
     /// <param name="signInManager">The sign in manager.</param>
     /// <param name="userService">The user service.</param>
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserService userService)
+    /// <param name="configuration">The configuration.</param>
+    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserService userService, IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _userService = userService;
+        _configuration = configuration;
     }
 
     /// <summary>
-    /// Logins the specified request.
+    /// Logins the specified model.
     /// </summary>
     /// <param name="request">The request.</param>
     /// <returns>IActionResult.</returns>
@@ -53,13 +65,38 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
-        if (user == null) 
-            return BadRequest("User does not exist");
-        var singInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!singInResult.Succeeded) 
-            return BadRequest("Invalid password");
-        await _signInManager.SignInAsync(user, request.RememberMe);
-        return Ok();
+        if (user != null && await _userManager.CheckPasswordAsync(user, request.Password))
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
+
+            var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:Issuer"],
+                audience: _configuration["JWT:Audience"],
+            expires: DateTime.Now.AddHours(3),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
+            });
+        }
+        return Unauthorized();
     }
 
     /// <summary>
@@ -70,8 +107,10 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Register(RegisterRequest parameters)
     {
-        var user = new ApplicationUser();
-        user.UserName = parameters.UserName;
+        var user = new ApplicationUser
+        {
+            UserName = parameters.UserName
+        };
         var result = await _userManager.CreateAsync(user, parameters.Password);
 
         switch (result.Succeeded)
@@ -109,7 +148,7 @@ public class AuthController : ControllerBase
     [HttpGet]
     public CurrentUser CurrentUserInfo()
     {
-        return new CurrentUser
+         return new CurrentUser
         {
             IsAuthenticated = User.Identity!.IsAuthenticated,
             UserName = User.Identity.Name!,

@@ -1,5 +1,6 @@
 ﻿using Blazor.Learner.Server.Data;
 using Blazor.Learner.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace Blazor.Learner.Server.Controllers;
 /// <seealso cref="ControllerBase" />
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class DeveloperController : ControllerBase
 {
     /// <summary>

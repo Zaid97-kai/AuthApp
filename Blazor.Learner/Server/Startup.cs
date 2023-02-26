@@ -49,17 +49,42 @@ public class Startup
         services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(options =>
+        services.AddSwaggerGen(swagger =>
         {
-            options.SwaggerDoc("v1",
-                new OpenApiInfo()
+            //This is to generate the Default UI of Swagger Documentation
+            swagger.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = "Web API",
+                Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
+            });
+            // To Enable authorization using Swagger (JWT)
+            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter ‘Bearer’ [space] and then your valid token in the text input below.\\r\\n\\r\\nExample: \\Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\\",
+            });
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                 {
-                    Title = "Swagger Demo API",
-                    Description = "Demo API for showing Swagger",
-                    Version = "v1"
-                });
-        });
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
 
+                }
+            });
+        });
+    
         services.ConfigureApplicationCookie(options =>
         {
             options.Cookie.HttpOnly = false;
@@ -74,11 +99,12 @@ public class Startup
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(o =>
             {
                 o.RequireHttpsMetadata = false;
-                o.SaveToken = false;
+                o.SaveToken = true;
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -113,7 +139,6 @@ public class Startup
         else
         {
             app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 

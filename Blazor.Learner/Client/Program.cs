@@ -28,9 +28,6 @@ public class Program
         builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
         builder.Services.AddScoped<IAuthService, AuthService>();
 
-        builder.Services.AddScoped<UserManager<ApplicationUser>>();
-        builder.Services.AddScoped<RoleManager<IdentityRole>>();
-
         builder.Services.AddTransient(sp => new HttpClient
         {
             BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
