@@ -13,7 +13,6 @@ namespace Blazor.Learner.Server.Controllers;
 /// <seealso cref="ControllerBase" />
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class DeveloperController : ControllerBase
 {
     /// <summary>

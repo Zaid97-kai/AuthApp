@@ -45,7 +45,7 @@ public class CustomStateProvider : AuthenticationStateProvider
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Name, _currentUser?.UserName!)
-                }.Concat(_currentUser?.Claims.Select(c => new Claim(c.Key, c.Value))!);
+                }.Concat(_currentUser?.Claims!.Select(c => new Claim(c.Key, c.Value))!);
                 identity = new ClaimsIdentity(claims, "Server authentication");
             }
         }
@@ -63,7 +63,9 @@ public class CustomStateProvider : AuthenticationStateProvider
     /// <returns>System.Nullable&lt;CurrentUser&gt;.</returns>
     private async Task<CurrentUser?> GetCurrentUser()
     {
-        if (_currentUser is { IsAuthenticated: true }) return _currentUser;
+        if (_currentUser is { IsAuthenticated: true }) 
+            return _currentUser;
+
         _currentUser = await _api.CurrentUserInfo();
         return _currentUser;
     }
